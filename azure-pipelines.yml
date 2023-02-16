@@ -10,29 +10,41 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
-  solution: '**/*.sln'
+  # solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
 
 steps:
-- task: NuGetToolInstaller@1
+# - task: NuGetToolInstaller@1
 
-- task: NuGetCommand@2
-  inputs:
-    restoreSolution: '$(solution)'
+# - task: NuGetCommand@2
+#   inputs:
+#     restoreSolution: '$(solution)'
 
-- task: VSBuild@1
-  inputs:
-    solution: '$(solution)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+# - task: VSBuild@1
+#   inputs:
+#     solution: '$(solution)'
+#     msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
+#     platform: '$(buildPlatform)'
+#     configuration: '$(buildConfiguration)'
 
-- task: VSTest@2
+# - task: VSTest@2
+#   inputs:
+#     platform: '$(buildPlatform)'
+#     configuration: '$(buildConfiguration)'
+
+- task: DotNetCoreCLI@2
   inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+    command: 'restore'
+    projects: '**/**/*.csproj'
+    feedsToUse: 'select'
+    vstsFeed: 'ad796264-0f06-4262-9dd2-4c8de87938f5'
     
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'build'
+    projects: '**/**/*.csproj'
+    arguments: '--configuration Release --no-restore'
 - task: DotNetCoreCLI@2
   displayName: 'Publish Build Output'
   inputs:
