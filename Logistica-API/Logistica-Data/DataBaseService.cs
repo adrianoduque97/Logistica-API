@@ -13,7 +13,8 @@ namespace Logistica_Data
             {
                 using(SqlConnection connection = new SqlConnection(connectionString: ConnectionString))
                 {
-                    var query = "SELECT * FROM Responsable";
+                    var query = @"SELECT * FROM Viaje v
+                                  JOIN Vehiculos h ON (v.VehiculoId = h.VehiculoId)";
                     SqlCommand command = new SqlCommand(query, connection);
                     connection.Open();
                     connection.ChangeDatabase(DataBaseName);

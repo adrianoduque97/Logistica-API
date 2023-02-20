@@ -1,3 +1,4 @@
+
 using Logistica_Data;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,6 +24,7 @@ namespace Logistica_API.Controllers
         [HttpGet(Name = "GetWeatherForecast")]
         public IEnumerable<WeatherForecast> Get()
         {
+            DataBaseService.GetResponsable();
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
                 Date = DateTime.Now.AddDays(index),

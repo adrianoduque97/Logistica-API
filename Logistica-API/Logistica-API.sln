@@ -5,7 +5,7 @@ VisualStudioVersion = 17.3.32929.385
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistica-API", "Logistica-API\Logistica-API.csproj", "{D82EADB5-51CD-41A7-BE62-955A9A6B4BDD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logistica-Data", "Logistica-Dara\Logistica-Data.csproj", "{2CAB8AA0-9E19-4BAE-BE82-80F746764F18}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logistica-Data", "Logistica-Data\Logistica-Data.csproj", "{2CAB8AA0-9E19-4BAE-BE82-80F746764F18}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
