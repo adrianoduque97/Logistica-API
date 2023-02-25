@@ -5,7 +5,7 @@ namespace Logistica_Data
 {
     public static class DataBaseService
     {
-        private const string ConnectionString = "Server=ADRIAN-DUQUE; Integrated Security=true;";
+        private static readonly string ConnectionString = Environment.GetEnvironmentVariable("databaseConnection") ?? "";
         private const string DataBaseName = "SI-LOGISTICA";
         public static string GetResponsable()
         {
@@ -22,8 +22,9 @@ namespace Logistica_Data
                     var y = r?.ToList();
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Console.WriteLine(e.Message, "Error");
                 return "";
             }
 

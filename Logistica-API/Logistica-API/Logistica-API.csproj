@@ -13,7 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Logistica-Dara\Logistica-Data.csproj" />
     <ProjectReference Include="..\Logistica-Data\Logistica-Data.csproj" />
   </ItemGroup>
 
