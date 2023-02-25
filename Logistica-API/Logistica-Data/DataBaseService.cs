@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Logistica_Data.DataModels;
 using System.Data.SqlClient;
 
 namespace Logistica_Data
@@ -7,28 +8,71 @@ namespace Logistica_Data
     {
         private static readonly string ConnectionString = Environment.GetEnvironmentVariable("databaseConnection") ?? "";
         private const string DataBaseName = "SI-LOGISTICA";
-        public static string GetResponsable()
+        public static IList<Viajes> GetViajes()
         {
             try
             {
                 using(SqlConnection connection = new SqlConnection(connectionString: ConnectionString))
                 {
                     var query = @"SELECT * FROM Viaje v
-                                  JOIN Vehiculos h ON (v.VehiculoId = h.VehiculoId)";
+                                  JOIN Vehiculos h ON (v.VehiculoId = h.VehiculoId)
+                                  JOIN Rutas result ON (v.RutaId = result.RutaId)
+                                  JOIN Responsables e ON (v.ResponsableId = e.ResponsableId)";
                     SqlCommand command = new SqlCommand(query, connection);
                     connection.Open();
                     connection.ChangeDatabase(DataBaseName);
-                    var r = connection.Query(query, commandType: System.Data.CommandType.Text);
-                    var y = r?.ToList();
+                    // Add multi-mapping for dependant tables
+                    var result = connection.Query<Viajes, Vehiculos, Rutas, Responsables,Viajes>(query, (a, b, c, d) => { a.Vehiculo = b; a.Ruta = c; a.Responsable = d ; return a; },splitOn:"VehiculoId, RutaId, ResponsableId"  , commandType: System.Data.CommandType.Text);
+                    return result.ToList();
                 }
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message, "Error");
-                return "";
+                return new List<Viajes>();
             }
+        }
 
-            return "";
+        public static IList<Vehiculos> GetVehiculos()
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString: ConnectionString))
+                {
+                    var query = @"SELECT * FROM Vehiculos";
+                    SqlCommand command = new SqlCommand(query, connection);
+                    connection.Open();
+                    connection.ChangeDatabase(DataBaseName);
+                    var result = connection.Query<Vehiculos>(query, commandType: System.Data.CommandType.Text);
+                    return result.ToList();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message, "Error");
+                return new List<Vehiculos>();
+            }
+        }
+
+        public static IList<Rutas> GetRutas()
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString: ConnectionString))
+                {
+                    var query = @"SELECT * FROM Rutas";
+                    SqlCommand command = new SqlCommand(query, connection);
+                    connection.Open();
+                    connection.ChangeDatabase(DataBaseName);
+                    var result = connection.Query<Rutas>(query, commandType: System.Data.CommandType.Text);
+                    return result.ToList();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message, "Error");
+                return new List<Rutas>();
+            }
         }
     }
 }
