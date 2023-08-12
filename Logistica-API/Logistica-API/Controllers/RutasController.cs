@@ -1,9 +1,6 @@
 ﻿using Logistica_Data.DataModels;
 using Logistica_Data;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Logistica_API.Services;
-using Logistica_Data.DataModels.SatControlModels;
 
 namespace Logistica_API.Controllers
 {
@@ -18,11 +15,10 @@ namespace Logistica_API.Controllers
         }
 
         [HttpGet(Name = "GetRutas")]
-        public async Task<IEnumerable<Item>> GetAsync()
+        public async Task<IEnumerable<Rutas>> GetAsync()
         {
             _logger.LogInformation("Fetching information about Rutas");
-            //var result = DataBaseService.GetRutas();
-            var result = await SatControlService.GetMobileListAsync();
+            var result = DataBaseService.GetRutas();
             return result;
         }
     }

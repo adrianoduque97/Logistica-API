@@ -8,7 +8,7 @@ using System.Xml.Serialization;
 namespace Logistica_Data.DataModels.SatControlModels
 {
     [XmlRoot(ElementName = "ITEM")]
-    public class Item
+    public class MobileItem
     {
 
         [XmlElement(ElementName = "VEH_ID")]
@@ -47,7 +47,7 @@ namespace Logistica_Data.DataModels.SatControlModels
 
 
     [XmlRoot(ElementName = "Status")]
-    public class Status
+    public class StatusMobile
     {
 
         [XmlElement(ElementName = "code")]
@@ -62,15 +62,15 @@ namespace Logistica_Data.DataModels.SatControlModels
     {
 
         [XmlElement(ElementName = "ITEM")]
-        public List<Item>? Item { get; set; }
+        public List<MobileItem>? Item { get; set; }
     }
 
     [XmlRoot(ElementName = "Response")]
-    public class Response
+    public class ResponseMobile
     {
 
         [XmlElement(ElementName = "Status")]
-        public Status? Status { get; set; }
+        public StatusMobile? Status { get; set; }
 
         [XmlElement(ElementName = "Mobile")]
         public Mobile? Mobile { get; set; }
@@ -81,7 +81,7 @@ namespace Logistica_Data.DataModels.SatControlModels
     {
 
         [XmlElement(ElementName = "Response")]
-        public Response? Response { get; set; }
+        public ResponseMobile? Response { get; set; }
     }
 
 

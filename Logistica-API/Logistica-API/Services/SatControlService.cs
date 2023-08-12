@@ -10,7 +10,7 @@ namespace Logistica_API.Services
         private static readonly string sPassword = "sistemassilogisticaecu2023";
         private static readonly HttpClient client = new();
 
-        public static async Task<List<Item>> GetMobileListAsync()
+        public static async Task<List<MobileItem>> GetMobileListAsync()
         {
             var urlReq = new UriBuilder(baseUrl + "/GetMobileList")
             {
@@ -29,7 +29,31 @@ namespace Logistica_API.Services
                 result = (BaseItems?)serializer.Deserialize(reader);
             }
 
-            return result?.Response?.Mobile?.Item ?? new List<Item>();
+            return result?.Response?.Mobile?.Item ?? new List<MobileItem>();
+
+
+        }
+
+        public static async Task<PlateHistory> GetHistoryByPlateAsync(string Plate)
+        {
+            var urlReq = new UriBuilder(baseUrl + "/HistoyDataLastLocationByPlate")
+            {
+                Query = $"sLogin={sLogin}&sPassword={sPassword}&sPlate={Plate}"
+            };
+
+            var response = client.GetAsync(urlReq.Uri).Result;
+            var responseBody = await response.Content.ReadAsStringAsync();
+
+            BasePlateHistory? result;
+
+            XmlSerializer serializer = new(typeof(BasePlateHistory));
+
+            using (StringReader reader = new(responseBody))
+            {
+                result = (BasePlateHistory?)serializer.Deserialize(reader);
+            }
+
+            return result?.Response?.Plate?.Hst ?? new PlateHistory();
 
 
         }
