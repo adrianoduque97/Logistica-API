@@ -1,6 +1,5 @@
 ﻿using Logistica_Data.DataModels;
 using Logistica_Data;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Logistica_API.Controllers
@@ -16,7 +15,7 @@ namespace Logistica_API.Controllers
         }
 
         [HttpGet(Name = "GetRutas")]
-        public IEnumerable<Rutas> Get()
+        public async Task<IEnumerable<Rutas>> GetAsync()
         {
             _logger.LogInformation("Fetching information about Rutas");
             var result = DataBaseService.GetRutas();
