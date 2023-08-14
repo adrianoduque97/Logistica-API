@@ -75,7 +75,7 @@ namespace Logistica_Data.DataModels.SatControlModels
         public string? LastOff { get; set; }
 
         [XmlElement(ElementName = "Odometer")]
-        public int? Odometer { get; set; }
+        public double? Odometer { get; set; }
 
     }
 
