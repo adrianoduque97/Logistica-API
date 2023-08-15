@@ -1,44 +1,66 @@
-# Node.js with Angular
-# Build a Node.js project that uses Angular.
-# Add steps that analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+# ASP.NET Core (.NET Framework)
+# Build and test ASP.NET Core projects targeting the full .NET Framework.
+# Add steps that publish symbols, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 
 trigger:
 - main
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: 'windows-latest'
+
+variables:
+  # solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
 
 steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '16.x'
-  displayName: 'Install Node.js'
+# - task: NuGetToolInstaller@1
 
-- script: |
-    npm install -g @angular/cli@15.1.4
-    cd logistica-ui
-    npm install --force
-    ng build --configuration production
-  displayName: 'npm install and build'
-  # workingDirectory: '$(Build.SourcesDirectory)'
-  
-- task: ArchiveFiles@2
-  inputs:
-    rootFolderOrFile: '$(System.DefaultWorkingDirectory)/logistica-ui/dist/logistica-ui'
-    includeRootFolder: false
-    archiveType: 'zip'
-    archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
-    replaceExistingArchive: true
-
-# - task: CopyFiles@2
+# - task: NuGetCommand@2
 #   inputs:
-#     SourceFolder: '$(System.DefaultWorkingDirectory)/logistica-ui/dist/logistica-ui'
-#     Contents: '**'
-#     TargetFolder: '$(Build.ArtifactStagingDirectory)'
+#     restoreSolution: '$(solution)'
 
+# - task: VSBuild@1
+#   inputs:
+#     solution: '$(solution)'
+#     msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
+#     platform: '$(buildPlatform)'
+#     configuration: '$(buildConfiguration)'
+
+# - task: VSTest@2
+#   inputs:
+#     platform: '$(buildPlatform)'
+#     configuration: '$(buildConfiguration)'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'restore'
+    projects: '**/**/*.csproj'
+    feedsToUse: 'select'
+    vstsFeed: 'ad796264-0f06-4262-9dd2-4c8de87938f5'
+    
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'build'
+    projects: '**/**/*.csproj'
+    arguments: '--configuration Release --no-restore'
+- task: DotNetCoreCLI@2
+  displayName: 'Publish Build Output'
+  inputs:
+    command: 'publish'
+    publishWebProjects: true
+    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory) --no-restore'
+    zipAfterPublish: false
+
+- task: NuGetCommand@2
+  inputs:
+    command: 'push'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
+    nuGetFeedType: 'internal'
+    publishVstsFeed: 'ad796264-0f06-4262-9dd2-4c8de87938f5'
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    ArtifactName: 'drop'
+    ArtifactName: 'si-logistica-api'
     publishLocation: 'Container'
