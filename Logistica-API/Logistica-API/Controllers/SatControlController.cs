@@ -32,5 +32,15 @@ namespace Logistica_API.Controllers
             return result;
         }
 
+        [HttpGet(Name = "GetZonesByPlateAndDate")]
+        public async Task<List<PlateZone>> GetZonesByPlateAndDate([FromQuery] string Plate, [FromQuery] DateTime StartDate , [FromQuery] DateTime EndDate)
+        {
+            _logger.LogInformation("Fetching information about Plates");
+            var result = await SatControlService.GetZonesByPlateAndDateAsync(Plate, StartDate, EndDate);
+            return result;
+        }
+
+
+
     }
 }
