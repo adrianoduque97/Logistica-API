@@ -25,7 +25,7 @@ namespace Logistica_API.Controllers
             _logger.LogInformation("Fetching information about Planner");
             var tableReference = AzureStorageService.GetTableReference("PlannerData");
             var result = await AzureStorageService.GetPlannerInfo(tableReference);
-            var resultList = result.GroupBy(x => x.DateCreated);
+            var resultList = result.GroupBy(x => x.DateCreated?.Date);
             return resultList;
         }
     }
