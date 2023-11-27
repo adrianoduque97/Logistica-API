@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Azure.Cosmos.Table;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,19 +7,19 @@ using System.Threading.Tasks;
 
 namespace Logistica_Data.DataModels
 {
-    public class Planner
+    public class Planner : TableEntity
     {
-        private string? Placa { get; set; }
-        private string? Arrastre { get; set; }
-        private string? Cliente { get; set; }
-        private string? Oigen { get; set; }
-        private string? Destino { get; set; }
-        private string? Indicacion { get; set; }
-        private object? Inicio { get; set; }
-        private string? Conductor { get; set; }
-        private int? Duracion { get; set; }
-        private DateTime? Fin { get; set; }
-        private string? Estatus { get; set; }
-        private DateTime? DateCreated { get; set; }
+        public string? Placa { get; set; }
+        public string? Arrastre { get; set; }
+        public string? Cliente { get; set; }
+        public string? Origen { get; set; }
+        public string? Destino { get; set; }
+        public string? Indicacion { get; set; }
+        public DateTime? Inicio { get; set; }
+        public string? Conductor { get; set; }
+        public string? Duracion { get; set; }
+        public DateTime? Fin { get; set; }
+        public string? Estatus { get; set; }
+        public DateTime? DateCreated { get; set; }
     }
 }
