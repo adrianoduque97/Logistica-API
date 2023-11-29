@@ -9,6 +9,7 @@ namespace Logistica_Data.DataModels
 {
     public class Planner : TableEntity
     {
+        public Guid PlanId { get; set; }
         public string? Placa { get; set; }
         public string? Arrastre { get; set; }
         public string? Cliente { get; set; }
