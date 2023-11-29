@@ -1,6 +1,10 @@
 ﻿using Logistica_Data.DataModels;
 using Microsoft.Azure.Cosmos.Table;
 using Microsoft.Azure.Cosmos.Table.Queryable;
+using Newtonsoft.Json;
+using System.Net;
+using System.Reflection;
+using static Dapper.SqlMapper;
 
 namespace Logistica_API.Services
 {
@@ -22,10 +26,24 @@ namespace Logistica_API.Services
                 //log.LogError(ex, "Failure getting dependant branches");
                 return new List<Planner>();
             }
+        }
+
+        public static async Task<bool> SafelySaveToTableStorage(Planner item)
+        {
+            try
+            {
+                await InsertOrReplaceTableValue("PlannerData", item);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                //log.LogError(ex, "Failied to save {Item} to table storage", JsonConvert.SerializeObject(item));
+                return false;
+            }
 
         }
 
-        public static async Task<List<T>> QueryAsync<T>(IQueryable<T> query) where T : ITableEntity, new()
+            public static async Task<List<T>> QueryAsync<T>(IQueryable<T> query) where T : ITableEntity, new()
         {
             TableQuerySegment<T> querySegment = null;
             List<T> models = new List<T>();
@@ -43,6 +61,41 @@ namespace Logistica_API.Services
         {
             var cloudTableClient = _tableCloudStorageAccount.CreateCloudTableClient();
             return cloudTableClient.GetTableReference(tableName);
+        }
+
+        public static async Task<bool> InsertOrReplaceTableValue<T>(string tableName, T entity) where T : ITableEntity, new()
+        {
+            var table = GetTableReference(tableName);
+            await table.CreateIfNotExistsAsync();
+
+            if (string.IsNullOrWhiteSpace(entity.PartitionKey))
+            {
+                entity.PartitionKey = new Guid().ToString();
+            }
+
+            if (string.IsNullOrWhiteSpace(entity.RowKey))
+            {
+                entity.RowKey = new Guid().ToString();
+            }
+
+            var tableResult = await table.ExecuteAsync(TableOperation.InsertOrReplace(entity));
+
+            return tableResult.HttpStatusCode == (int)HttpStatusCode.NoContent;
+        }
+
+        public static async Task<bool> DeleteTableValue(string tableName, string partitionKey)
+        {
+            var table = GetTableReference(tableName);
+            await table.CreateIfNotExistsAsync();
+
+            // query for entities to delete
+            var query = table.CreateQuery<Planner>().Where(x => x.PartitionKey == partitionKey);
+            var entitiesToDelete = await QueryAsync(query);
+
+
+            var tableResult = await table.ExecuteAsync(TableOperation.Delete(entitiesToDelete?.FirstOrDefault()));
+
+            return tableResult.HttpStatusCode == (int)HttpStatusCode.NoContent;
         }
     }
 }
