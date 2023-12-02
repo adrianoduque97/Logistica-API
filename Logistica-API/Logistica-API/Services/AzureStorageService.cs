@@ -93,7 +93,7 @@ namespace Logistica_API.Services
             var entitiesToDelete = await QueryAsync(query);
 
 
-            var tableResult = await table.ExecuteAsync(TableOperation.Delete(entitiesToDelete?.FirstOrDefault()));
+            var tableResult = entitiesToDelete?.Count>0 ? await table.ExecuteAsync(TableOperation.Delete(entitiesToDelete?.FirstOrDefault())) : new TableResult();
 
             return tableResult.HttpStatusCode == (int)HttpStatusCode.NoContent;
         }
