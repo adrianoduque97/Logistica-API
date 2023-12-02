@@ -2,6 +2,7 @@
 using Logistica_Data.DataModels;
 using Logistica_Data.DataModels.SatControlModels;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace Logistica_API.Controllers
 {
@@ -34,7 +35,7 @@ namespace Logistica_API.Controllers
         {
             _logger.LogInformation("Saving Plan info");
             var results = await Task.WhenAll(plan.Select(item => AzureStorageService.SafelySaveToTableStorage(item)));
-            return Ok($"Added: {results?.Where(c =>c)?.Count()} successfully, Failed: {results?.Where(c => !c)?.Count()}");
+            return Ok(plan);
         }
 
         [HttpPut(Name = "UpdatePlan")]
@@ -46,11 +47,11 @@ namespace Logistica_API.Controllers
         }
 
         [HttpDelete(Name = "DeletePlan")]
-        public async Task<OkObjectResult> DeletePlan([FromQuery] IList<string> plan)
+        public async Task<ObjectResult> DeletePlan([FromHeader] string plan)
         {
             _logger.LogInformation("Saving Plan info");
-            var results = await Task.WhenAll( plan.Select( item =>  AzureStorageService.DeleteTableValue("PlannerData",item)));
-            return Ok($"Deleted: {results?.Where(c => c)?.Count()}");
+            var results = await AzureStorageService.DeleteTableValue("PlannerData",plan);
+            return results? Ok(JsonSerializer.Serialize(plan)) : new ObjectResult(StatusCodes.Status400BadRequest);
         }
     }
 }
