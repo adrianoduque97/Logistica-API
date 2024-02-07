@@ -30,6 +30,16 @@ namespace Logistica_API.Controllers
             return resultList;
         }
 
+        [HttpGet(Name = "GetPlannerHistoryByDateRange")]
+        public async Task<List<Planner>> GetPlannerHistoryByDateRangeAsync([FromQuery] DateTime StartDate, [FromQuery] DateTime EndDate)
+        {
+            _logger.LogInformation("Fetching information about Planner by Date");
+            var tableReference = AzureStorageService.GetTableReference("PlannerData");
+            var result = await AzureStorageService.GetPlannerInfo(tableReference);
+            result = result?.Where(x => (x.Fin?.Date >= StartDate.Date) && (x.Fin?.Date <= EndDate.Date))?.ToList();
+            return result ?? new List<Planner>();
+        }
+
         [HttpPost(Name ="SavePlan")]
         public async Task<OkObjectResult> SavePlan( [FromBody] IList<Planner> plan)
         {
