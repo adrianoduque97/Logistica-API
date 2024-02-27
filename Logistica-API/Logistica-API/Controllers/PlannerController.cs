@@ -20,13 +20,23 @@ namespace Logistica_API.Controllers
         }
 
 
-        [HttpGet(Name = "GetPlannerHistory")]
-        public async Task<IEnumerable<IGrouping<DateTime?,Planner>>> GetPlannerHistoryAsync()
+        [HttpGet(Name = "GetPlannerHistoryByDatePlanned")]
+        public async Task<IEnumerable<IGrouping<DateTime?,Planner>>> GetPlannerHistoryByDatePlannedAsync()
         {
             _logger.LogInformation("Fetching information about Planner");
             var tableReference = AzureStorageService.GetTableReference("PlannerData");
             var result = await AzureStorageService.GetPlannerInfo(tableReference);
             var resultList = result.GroupBy(x => x.DateCreated?.Date);
+            return resultList;
+        }
+
+        [HttpGet(Name = "GetPlannerHistory")]
+        public async Task<IEnumerable<Planner>> GetPlannerHistoryAsync()
+        {
+            _logger.LogInformation("Fetching information about Planner");
+            var tableReference = AzureStorageService.GetTableReference("PlannerData");
+            var result = await AzureStorageService.GetPlannerInfo(tableReference);
+            var resultList = result.ToList();
             return resultList;
         }
 
